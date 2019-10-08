@@ -25,6 +25,7 @@
 package net.fabricmc.loom;
 
 import com.google.gson.JsonObject;
+import net.fabricmc.loom.providers.GameProvider;
 import net.fabricmc.loom.providers.MappingsProvider;
 import net.fabricmc.loom.providers.MinecraftMappedProvider;
 import net.fabricmc.loom.providers.MinecraftProvider;
@@ -223,8 +224,13 @@ public class LoomGradleExtension {
 		return dependencyManager;
 	}
 
+	// Use getGameProvider whenever possible
 	public MinecraftProvider getMinecraftProvider(){
 		return getDependencyManager().getProvider(MinecraftProvider.class);
+	}
+	
+	public GameProvider getGameProvider(){
+		return getDependencyManager().getProvider(GameProvider.class);
 	}
 
 	public MinecraftMappedProvider getMinecraftMappedProvider(){

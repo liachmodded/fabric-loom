@@ -34,11 +34,11 @@ import java.io.File;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public class MinecraftMappedProvider extends DependencyProvider {
-    public File MINECRAFT_MAPPED_JAR;
-    public File MINECRAFT_INTERMEDIARY_JAR;
+public class MinecraftMappedProvider extends DependencyProvider implements MappedGameProvider {
+    private File MINECRAFT_MAPPED_JAR;
+    private File MINECRAFT_INTERMEDIARY_JAR;
 
-    private MinecraftProvider minecraftProvider;
+    private GameProvider minecraftProvider;
 
     @Override
     public void provide(DependencyInfo dependency, Project project, LoomGradleExtension extension, Consumer<Runnable> postPopulationScheduler) throws Exception {
@@ -46,16 +46,16 @@ public class MinecraftMappedProvider extends DependencyProvider {
             throw new RuntimeException("mappings file not found");
         }
 
-        if (!extension.getMinecraftProvider().getMergedJar().exists()) {
+        if (!extension.getGameProvider().getGameJar().exists()) {
             throw new RuntimeException("input merged jar not found");
         }
 
-        if(!getMappedJar().exists() || !getIntermediaryJar().exists()){
-            if (getMappedJar().exists()) {
-                getMappedJar().delete();
+        if(!MINECRAFT_MAPPED_JAR.exists() || !MINECRAFT_INTERMEDIARY_JAR.exists()){
+            if (MINECRAFT_MAPPED_JAR.exists()) {
+                MINECRAFT_MAPPED_JAR.delete();
             }
-            if (getIntermediaryJar().exists()) {
-                getIntermediaryJar().delete();
+            if (MINECRAFT_INTERMEDIARY_JAR.exists()) {
+                MINECRAFT_INTERMEDIARY_JAR.delete();
             }
             new MapJarsTiny().mapJars(minecraftProvider, this, project);
         }
@@ -64,21 +64,21 @@ public class MinecraftMappedProvider extends DependencyProvider {
             throw new RuntimeException("mapped jar not found");
         }
 
-        String version = minecraftProvider.minecraftVersion + "-mapped-" + extension.getMappingsProvider().mappingsName + "-" + extension.getMappingsProvider().mappingsVersion;
+        String version = minecraftProvider.getVersion() + "-mapped-" + extension.getMappingsProvider().mappingsName + "-" + extension.getMappingsProvider().mappingsVersion;
         project.getDependencies().add(Constants.MINECRAFT_NAMED, project.getDependencies().module("net.minecraft:minecraft:" + version));
-        version = minecraftProvider.minecraftVersion + "-intermediary-" + extension.getMappingsProvider().mappingsName;
+        version = minecraftProvider.getVersion() + "-intermediary-" + extension.getMappingsProvider().mappingsName;
         project.getDependencies().add(Constants.MINECRAFT_INTERMEDIARY, project.getDependencies().module("net.minecraft:minecraft:" + version));
     }
 
-    public void initFiles(Project project, MinecraftProvider minecraftProvider, MappingsProvider mappingsProvider) {
+    public void initFiles(Project project, GameProvider minecraftProvider, MappingsProvider mappingsProvider) {
         LoomGradleExtension extension = project.getExtensions().getByType(LoomGradleExtension.class);
         this.minecraftProvider = minecraftProvider;
-        MINECRAFT_INTERMEDIARY_JAR = new File(extension.getUserCache(), "minecraft-" + minecraftProvider.minecraftVersion + "-intermediary-"  + mappingsProvider.mappingsName + ".jar");
-        MINECRAFT_MAPPED_JAR = new File(extension.getUserCache(), "minecraft-" + minecraftProvider.minecraftVersion + "-mapped-" + mappingsProvider.mappingsName + "-" + mappingsProvider.mappingsVersion + ".jar");
+        MINECRAFT_INTERMEDIARY_JAR = new File(extension.getUserCache(), "minecraft-" + minecraftProvider.getVersion() + "-intermediary-"  + mappingsProvider.mappingsName + ".jar");
+        MINECRAFT_MAPPED_JAR = new File(extension.getUserCache(), "minecraft-" + minecraftProvider.getVersion() + "-mapped-" + mappingsProvider.mappingsName + "-" + mappingsProvider.mappingsVersion + ".jar");
     }
 
     public Collection<File> getMapperPaths() {
-        return minecraftProvider.libraryProvider.getLibraries();
+        return minecraftProvider.getLibraries();
     }
 
     public File getIntermediaryJar() {

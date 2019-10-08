@@ -57,7 +57,7 @@ public class MinecraftAssetsProvider {
 			assets.mkdirs();
 		}
 
-		File assetsInfo = new File(assets, "indexes" + File.separator + assetIndex.getFabricId(minecraftProvider.minecraftVersion) + ".json");
+		File assetsInfo = new File(assets, "indexes" + File.separator + assetIndex.getFabricId(minecraftProvider.getVersion()) + ".json");
 		if (!assetsInfo.exists() || !Checksum.equals(assetsInfo, assetIndex.sha1)) {
 			project.getLogger().lifecycle(":downloading asset index");
 			if (offline) {

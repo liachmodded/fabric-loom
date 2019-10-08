@@ -24,6 +24,7 @@
 
 package net.fabricmc.loom;
 
+import net.fabricmc.loom.providers.GameProvider;
 import net.fabricmc.loom.providers.MappingsProvider;
 import net.fabricmc.loom.providers.MinecraftLibraryProvider;
 import net.fabricmc.loom.task.*;
@@ -89,7 +90,7 @@ public class LoomGradlePlugin extends AbstractPlugin {
 
 			Project project = this.getProject();
 			LoomGradleExtension extension = project.getExtensions().getByType(LoomGradleExtension.class);
-			MinecraftLibraryProvider libraryProvider = extension.getMinecraftProvider().libraryProvider;
+			GameProvider gameProvider = extension.getGameProvider();
 			MappingsProvider mappingsProvider = extension.getMappingsProvider();
 			File mappedJar = mappingsProvider.mappedProvider.getMappedJar();
 			File linemappedJar = getMappedByproduct(project, "-linemapped.jar");
@@ -99,7 +100,7 @@ public class LoomGradlePlugin extends AbstractPlugin {
 			decompileTask.setInput(mappedJar);
 			decompileTask.setOutput(sourcesJar);
 			decompileTask.setLineMapFile(linemapFile);
-			decompileTask.setLibraries(libraryProvider.getLibraries());
+			decompileTask.setLibraries(gameProvider.getLibraries());
 
 			remapLineNumbersTask.setInput(mappedJar);
 			remapLineNumbersTask.setLineMapFile(linemapFile);

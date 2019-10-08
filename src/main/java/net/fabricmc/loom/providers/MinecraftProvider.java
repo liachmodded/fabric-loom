@@ -27,6 +27,7 @@ package net.fabricmc.loom.providers;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.util.Collection;
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.util.*;
 import net.fabricmc.stitch.merge.JarMerger;
@@ -44,9 +45,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.zip.ZipError;
 
-public class MinecraftProvider extends DependencyProvider {
+public class MinecraftProvider extends DependencyProvider implements GameProvider {
 
-	public String minecraftVersion;
+	private String minecraftVersion;
 
 	public MinecraftVersionInfo versionInfo;
 	public MinecraftLibraryProvider libraryProvider;
@@ -188,12 +189,23 @@ public class MinecraftProvider extends DependencyProvider {
 		}
 	}
 
-	public File getMergedJar() {
+	@Override
+	public File getGameJar() {
 		return MINECRAFT_MERGED_JAR;
 	}
 
 	@Override
 	public String getTargetConfig() {
 		return Constants.MINECRAFT;
+	}
+
+	@Override
+	public String getVersion() {
+		return minecraftVersion;
+	}
+
+	@Override
+	public Collection<File> getLibraries() {
+		return libraryProvider.getLibraries();
 	}
 }

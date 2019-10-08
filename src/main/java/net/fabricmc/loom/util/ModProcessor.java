@@ -142,7 +142,7 @@ public class ModProcessor {
 		File mappingsFile = mappingsProvider.MAPPINGS_TINY;
 		Path mappings = mappingsFile.toPath();
 		Path inputPath = input.getAbsoluteFile().toPath();
-		Path mc = mappedProvider.MINECRAFT_INTERMEDIARY_JAR.toPath();
+		Path mc = mappedProvider.getIntermediaryJar().toPath();
 		Path[] mcDeps = mappedProvider.getMapperPaths().stream()
 			.map(File::toPath)
 			.toArray(Path[]::new);

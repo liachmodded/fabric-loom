@@ -33,9 +33,7 @@ import net.fabricmc.stitch.commands.CommandProposeFieldNames;
 import org.gradle.api.Project;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -62,7 +60,7 @@ public class MappingsProvider extends DependencyProvider {
 
 	@Override
 	public void provide(DependencyInfo dependency, Project project, LoomGradleExtension extension, Consumer<Runnable> postPopulationScheduler) throws Exception {
-		MinecraftProvider minecraftProvider = getDependencyManager().getProvider(MinecraftProvider.class);
+		GameProvider minecraftProvider = getDependencyManager().getProvider(GameProvider.class);
 
 		project.getLogger().lifecycle(":setting up mappings (" + dependency.getDependency().getName() + " " + dependency.getResolvedVersion() + ")");
 
@@ -96,7 +94,7 @@ public class MappingsProvider extends DependencyProvider {
 
 			project.getLogger().lifecycle(":populating field names");
 			new CommandProposeFieldNames().run(new String[] {
-					minecraftProvider.MINECRAFT_MERGED_JAR.getAbsolutePath(),
+					minecraftProvider.getGameJar().getAbsolutePath(),
 					MAPPINGS_TINY_BASE.getAbsolutePath(),
 					MAPPINGS_TINY.getAbsolutePath()
 			});
